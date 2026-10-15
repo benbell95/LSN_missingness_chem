@@ -41,7 +41,6 @@ source("Scripts/missing_data_functions.r")
 
 #establish connectioin to databricks
 
-warehouses <- db_sql_warehouse_list()
 
 con <- dbConnect(
   drv = DatabricksSQL(),
