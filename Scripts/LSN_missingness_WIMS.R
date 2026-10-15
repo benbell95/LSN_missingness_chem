@@ -61,24 +61,10 @@ LSN_sites <- dbGetQuery(con,
 
 #Select columns, add distinct() as some sites are duplicated in the databricks input data
 
-LSN_sites_filtered <- LSN_sites %>%
-  mutate(version_start = dmy(version_start)) %>%
-  dplyr::select(
-    network_id,
-    original_or_oversample,
-    panel,
-    site_commenced,
-    status,
-    replacement_site_flag,
-    latitude_wgs_84,
-    longitude_wgs_84,
-    version_start
-  ) %>%
-  filter(
-    startsWith(network_id, param$st),
-    year(version_start) %in% param$years
-    ) %>%
-  distinct()
+LSN_sites <- dbGetQuery(con, paste0("SELECT network_id, original_or_oversample, panel, site_commenced, status, replacement_site_flag, latitude_wgs_84, longitude_wgs_84, version_start
+FROM prd_dash_lab.seda_unrestricted.ard_lsn_point_sites
+WHERE network_id LIKE '", param$st, "%' 
+AND YEAR(version_start) IN (", paste(param$design_years, collapse=", "), ")"))
 
 #For panel information extract required data from LSN_sites 
 #columns required
